@@ -30,15 +30,14 @@ bot = commands.Bot(command_prefix=".", case_insensitive=True, description=descri
 @bot.event
 async def on_ready():
     print("""
-   ▄████████   ▄▄▄▄███▄▄▄▄      ▄███████▄  ▄█       
-  ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███       
-  ███    █▀  ███   ███   ███   ███    ███ ███       
-  ███        ███   ███   ███   ███    ███ ███       
-▀███████████ ███   ███   ███ ▀█████████▀  ███       
-         ███ ███   ███   ███   ███        ███       
-   ▄█    ███ ███   ███   ███   ███        ███▌    ▄ 
- ▄████████▀   ▀█   ███   █▀   ▄████▀      █████▄▄██ 
-                                          ▀         
+         _______  _______  _______  _          _______     _______ 
+        (  ____ \(       )(  ____ )( \        / ___   )   (  __   )
+        | (    \/| () () || (    )|| (        \/   )  |   | (  )  |
+        | (_____ | || || || (____)|| |            /   )   | | /   |
+        (_____  )| |(_)| ||  _____)| |          _/   /    | (/ /) |
+              ) || |   | || (      | |         /   _/     |   / | |
+        /\____) || )   ( || )      | (____/\  (   (__/\ _ |  (__) |
+        \_______)|/     \||/       (_______/  \_______/(_)(_______)
     """)
 
     guild = None
@@ -68,36 +67,6 @@ async def on_command_error(ctx, error):
         embedVar = discord.Embed(title="Befehl unbekannt", description=f'**{ctx.message.content}**', color=0xff1c1c)
         await ctx.send(embed=embedVar)
 
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
-    await bot.process_commands(message)
-
-    #add messages +1 to userdata
-    db.database.execute(f'SELECT msg FROM userdata WHERE d_id = "{message.author.id}"')
-    result = db.database.fetchall()
-    if result:
-        db.database.execute(f'UPDATE userdata SET msg = msg + 1 WHERE d_id = "{message.author.id}"')
-
-
-    # Message-Achievement Check
-    message_achievement = helper.check_for_achievement(message.author.id, "messages")
-        
-    #send embed with gained message achievement
-    if message_achievement:
-        embedVar = discord.Embed(title="Simplistic - Achievements", description=f'{message.author.display_name} hat ein Achievement erhalten.', color=0x00ff00)
-        embedVar.add_field(name=f"{message_achievement[1]}", value=f"{message_achievement[4]}", inline=False)
-        await message.channel.send(embed=embedVar)
-
-    # Money-Achievement Check
-    #money_achievement = helper.check_for_achievement(message.author.id, "money")
-    #if money_achievement:
-    #    embedVar = discord.Embed(title="Simplistic - Achievements", description=f'{message.author.display_name} hat ein Achievement erhalten.', color=0x00ff00)
-    #    embedVar.add_field(name=f"{money_achievement[1]}", value=f"{money_achievement[4]}", inline=False)
-    #    await message.channel.send(embed=embedVar)
-
-
 @bot.command(help="Lädt ein Modul neu.")
 @has_permissions(administrator=True)
 async def reload(ctx, extension):
@@ -110,7 +79,6 @@ for filename in os.listdir(os.path.dirname(os.path.realpath(__file__))+"/cogs"):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
 
-
 @bot.event
 async def on_member_join(member):
     db.database.execute(f'SELECT d_id FROM userdata WHERE d_id = "{member.id}"')
@@ -119,10 +87,5 @@ async def on_member_join(member):
     if not result:
         db.database.execute(f'INSERT INTO userdata (d_id, lvl, warns, msg, join_date, xp, growth) VALUES ({member.id}, 0, 0, 0, "{joined}", 0, 0.25)')
         db.database.execute(f'INSERT INTO economy (d_id) VALUES ({member.id})')
-
-@bot.event
-async def on_member_remove(member):
-    db.database.execute(f'DELETE FROM userdata WHERE d_id = "{member.id}"')
-
 
 bot.run(c_parser.get('Bot', 'token'))

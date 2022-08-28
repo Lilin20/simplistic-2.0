@@ -31,52 +31,14 @@ class Profile(commands.Cog):
     async def on_ready(self):
         print("Profile module loaded.")
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.content.startswith('.'):
-            return
-        if message.author == self.bot.user:
-            return
-        if message.content.startswith("https") or message.content.startswith("http"):
-            return
-        else:
-            xp_to_give = len(message.content) - message.content.count(" ")
-            db.database.execute(f'UPDATE userdata SET xp = xp + {xp_to_give} WHERE d_id = {message.author.id}')
-            db.database.execute(f'SELECT * FROM userdata WHERE d_id = {message.author.id}')
-            result = db.database.fetchall()
-            try:
-              fetched_xp, fetched_growth, fetched_level = result[0][5], result[0][6], result[0][1]
-            except IndexError:
-              print(result)
-              print("Unknown Error")
-            calculate_xp = 50 * (1+fetched_growth) ** int(fetched_level)
-            if fetched_xp >= calculate_xp:
-                db.database.execute(f'UPDATE userdata SET lvl = lvl + 1 WHERE d_id = {message.author.id}')
-                db.database.execute(f'UPDATE userdata SET xp = 0 WHERE d_id = {message.author.id}')
-                db.database.execute(f'UPDATE userdata SET growth = growth + 0.025 WHERE d_id = {message.author.id}')
-                embedVar = discord.Embed(title="Level Up!", description=f'{message.author.name} hat ein neues Level erreicht!', color=0x0000CD)
-                embedVar.set_thumbnail(url="https://i.redd.it/5ej93xbz1jo51.gif")
-                embedVar.set_author(name=message.author, url=" ",icon_url=message.author.avatar_url)
-                await message.channel.send(embed=embedVar, delete_after=5)
-
     @commands.command(help="Zeigt das eigene Profil oder das eines anderen Users an.")
     async def profile(self, ctx, *, user: discord.Member = None):
         if user is None:
             user = ctx.author
-        db.database.cursor.execute(f'SELECT * FROM userdata WHERE d_id = {user.id}')
-        result_userdata = db.database.fetchall()
 
-        db.database.cursor.execute(f"SELECT * FROM economy WHERE d_id = %s;", (user.id,))
-        result_economy = db.database.cursor.fetchall()
-
-        #Get latest achievement from user_achievements
-        db.database.cursor.execute(f"SELECT * FROM user_achievements WHERE d_id = %s ORDER BY achievement_id DESC LIMIT 1;", (user.id,))
-        result_achievements = db.database.cursor.fetchall()
-
-        #Get achievement from achievements using result_achievement[0][1]
-        db.database.cursor.execute(f"SELECT * FROM achievements WHERE id = %s;", (result_achievements[0][1],))
-        result_achievement = db.database.cursor.fetchall()
-
+        result_userdata = [["test", "test", "test", "test", "test", "test", "test"]]
+        result_achievement = [["testachievement","testachievement","testachievement","testachievement","testachievement",]]
+        result_economy = [[0, 0, 0,0,0,0,0,0,0,0,0,]]
         base = Image.open("profile.png").convert("RGBA")
         
         pfp = user.avatar_url
@@ -125,25 +87,6 @@ class Profile(commands.Cog):
             base.save(a, "PNG")
             a.seek(0)
             await ctx.send(file=discord.File(a, "profile_test.png"))
-
-
-        
-
-    @commands.command(help="Setzt einen beliebigen Status für dein Profil.")
-    async def set_status(self, ctx, *args):
-        string = ""
-        user_id = ctx.author.id
-
-        if len(args) > 0:
-            for word in args:
-                string += word+" "
-
-        if len(string) >= 17:
-            await ctx.send("Dein Status darf nicht länger als 15 Zeichen sein.")
-            return
-
-        db.database.execute(f'UPDATE userdata SET description = "{string}" WHERE d_id = "{user_id}"')
-
 
 def setup(bot):
     bot.add_cog(Profile(bot))

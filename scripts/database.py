@@ -2,7 +2,6 @@ import mysql.connector
 import configparser
 import os
 
-
 def getpath():
     return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config', 'config.ini')
 
