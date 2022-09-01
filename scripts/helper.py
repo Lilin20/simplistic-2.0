@@ -3,7 +3,7 @@ from discord.utils import get
 
 class DefaultConfig:
     profile_values = {'level': 0, 'xp': 0, 'growth': 0, 'messages': 0, 'warns': 0}
-    economy_values = {'balance': 0, 'got_robbed': 0, 'has_robbed': 0}
+    economy_values = {'balance': 0, 'worked':0,'got_robbed': 0, 'has_robbed': 0}
     guild = None
     bot = None
 

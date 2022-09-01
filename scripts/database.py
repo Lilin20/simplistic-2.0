@@ -49,6 +49,6 @@ class Connector:
 
     def add_user(self, id, username):
         self.cursor.execute(f"INSERT INTO users (id, username, level, xp, growth, messages, warns) VALUES ('{id}', '{username}', {helper.DefaultConfig.profile_values['level']}, {helper.DefaultConfig.profile_values['xp']}, {helper.DefaultConfig.profile_values['growth']}, {helper.DefaultConfig.profile_values['messages']}, {helper.DefaultConfig.profile_values['warns']})")
-        self.cursor.execute(f"INSERT INTO economy (users_id, balance, got_robbed, has_robbed) VALUES ('{id}', {helper.DefaultConfig.economy_values['balance']}, {helper.DefaultConfig.economy_values['got_robbed']}, {helper.DefaultConfig.economy_values['has_robbed']})")
+        self.cursor.execute(f"INSERT INTO economy (users_id, balance, worked,got_robbed, has_robbed) VALUES ('{id}', {helper.DefaultConfig.economy_values['balance']}, {helper.DefaultConfig.economy_values['worked']}, {helper.DefaultConfig.economy_values['got_robbed']}, {helper.DefaultConfig.economy_values['has_robbed']})")
 
 database = Connector(host, user, password, db)
