@@ -47,6 +47,17 @@ class Connector:
         self.cursor.execute(f"SELECT has_robbed FROM economy WHERE users_id = '{id}'")
         return self.cursor.fetchall()[0][0]
 
+    def get_level(self, id):
+        self.cursor.execute(f'SELECT level FROM users WHERE id = "{id}"')
+        return self.cursor.fetchall()[0][0]
+
+    def get_status(self, id):
+        self.cursor.execute(f"SELECT status FROM users WHERE id = '{id}'")
+        return self.cursor.fetchall()[0][0]
+
+    def set_status(self, id, status):
+        self.cursor.execute(f"UPDATE users SET status = '{status}' WHERE id = '{id}'")
+
     def add_user(self, id, username):
         self.cursor.execute(f"INSERT INTO users (id, username, level, xp, growth, messages, warns) VALUES ('{id}', '{username}', {helper.DefaultConfig.profile_values['level']}, {helper.DefaultConfig.profile_values['xp']}, {helper.DefaultConfig.profile_values['growth']}, {helper.DefaultConfig.profile_values['messages']}, {helper.DefaultConfig.profile_values['warns']})")
         self.cursor.execute(f"INSERT INTO economy (users_id, balance, worked,got_robbed, has_robbed) VALUES ('{id}', {helper.DefaultConfig.economy_values['balance']}, {helper.DefaultConfig.economy_values['worked']}, {helper.DefaultConfig.economy_values['got_robbed']}, {helper.DefaultConfig.economy_values['has_robbed']})")

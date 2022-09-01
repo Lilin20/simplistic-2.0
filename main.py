@@ -55,7 +55,7 @@ async def on_member_join(member):
         db.database.add_user(member.id, member.name)
         print(f"{member.name} has been added to the database.")
 
-@bot.bridge_command()
+@bot.slash_command()
 async def test_msg(ctx):
     embed = discord.Embed(title="Simplistic", description=" ", color=0x00ff00)
     embed.add_field(name="Willkommen", value="auf dem inoffiziellen Discord-Server der TBS1. Bitte wähle unten im Selector eine passende Rolle. Bitte wähle die Rolle die auch zu deiner Klasse passt. Falls du kein Schüler der TBS1 bist, dann nimm bitte die Rolle 'Gast'. Falls du ein Schüler der TBS1 bist, bitten wir dich die Rolle zu nehmen mit der richtigen Klassenbezeichnung. Viel spaß auf unserem Discord-Server!", inline=False)
@@ -68,14 +68,14 @@ async def on_command_error(ctx, error):
         embedVar = discord.Embed(title="404 - Befehl nicht gefunden.", description=f'**{ctx.message.content}**', color=0xff1c1c)
         await ctx.send(embed=embedVar)
 
-@bot.bridge_command(help="Lädt ein Modul neu.")
+@bot.slash_command(help="Lädt ein Modul neu.")
 async def reload(ctx, extension):
     if ctx.author.guild_permissions.administrator:
         bot.unload_extension(f'cogs.{extension}')
         bot.load_extension(f'cogs.{extension}')
         await ctx.send(f"Successfully reloaded the '{extension}' module!")
 
-@bot.bridge_command(help="Lädt ein Modul.")
+@bot.slash_command(help="Lädt ein Modul.")
 async def load(ctx, extension):
     if ctx.author.guild_permissions.administrator:
         bot.load_extension(f'cogs.{extension}')

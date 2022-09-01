@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
     xp            INT NOT NULL,
     growth        FLOAT NOT NULL,
     messages      INT NOT NULL,
-    warns         INT NOT NULL
+    warns         INT NOT NULL,
+    status        VARCHAR(255) NOT NULL DEFAULT("No status set.")
 );
 
 DROP TABLE IF EXISTS economy;
