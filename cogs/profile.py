@@ -21,12 +21,16 @@ class Profile(commands.Cog):
     status = discord.SlashCommandGroup('status', "Bearbeite deinen Status")
     @status.command()
     async def set(self, ctx, status):
-        await ctx.send("test")
+        if len(status) > 50:
+            await ctx.respond("Dein Status darf nicht länger als 50 Zeichen sein.", ephemeral=True)
+            return
+        db.database.set_status(ctx.author.id, f"{status}")
+        await ctx.respond("Status wurde geändert.", ephemeral=True)
 
     @status.command()
     async def reset(self, ctx):
         db.database.set_status(ctx.author.id, " ")
-        await ctx.respond("Dein Status wurde zurückgesetzt." ephemeral=True)
+        await ctx.respond("Dein Status wurde zurückgesetzt.", ephemeral=True)
 
     @discord.slash_command()
     async def profile(self, ctx, member: discord.Member = None):
@@ -47,6 +51,7 @@ class Profile(commands.Cog):
             ]),
         ]
         self.pages[0].set_thumbnail(url=member.avatar.url)
+        self.pages[0].set_footer(text=f"Join date: {member.joined_at.date()}\nAccount created: {member.created_at.date()}")
         self.pages[1].set_thumbnail(url=member.avatar.url)
 
         paginator = pages.Paginator(pages=self.pages)

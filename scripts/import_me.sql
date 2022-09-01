@@ -25,4 +25,13 @@ CREATE TABLE IF NOT EXISTS economy (
     FOREIGN KEY(users_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS server_vars;
+CREATE TABLE IF NOT EXISTS server_vars (
+    name            VARCHAR(255) NOT NULL,
+    value           INT NOT NULL
+);
+
+INSERT INTO server_vars (name, value) VALUES ("steuer", 5);
+INSERT INTO server_vars (name, value) VALUES ("server_money", 0);
+
 SET FOREIGN_KEY_CHECKS=0;

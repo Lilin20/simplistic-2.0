@@ -39,6 +39,9 @@ class Connector:
         self.cursor.execute(f"SELECT balance FROM economy WHERE users_id = '{id}'")
         return self.cursor.fetchall()[0][0]
 
+    def add_balance(self, id, value):
+        self.cursor.execute(f"UPDATE economy SET balance = balance + {value} WHERE users_id = '{id}'")
+
     def get_robbed(self, id):
         self.cursor.execute(f"SELECT got_robbed FROM economy WHERE users_id = '{id}'")
         return self.cursor.fetchall()[0][0]
@@ -57,6 +60,13 @@ class Connector:
 
     def set_status(self, id, status):
         self.cursor.execute(f"UPDATE users SET status = '{status}' WHERE id = '{id}'")
+
+    def get_server_var(self, var):
+        self.cursor.execute(f"SELECT value FROM server_vars WHERE name = '{var}'")
+        return self.cursor.fetchall()[0][0]
+    
+    def add_server_money(self, var, value):
+        self.cursor.execute(f"UPDATE server_vars SET value = value + {value} WHERE name = '{var}'")
 
     def add_user(self, id, username):
         self.cursor.execute(f"INSERT INTO users (id, username, level, xp, growth, messages, warns) VALUES ('{id}', '{username}', {helper.DefaultConfig.profile_values['level']}, {helper.DefaultConfig.profile_values['xp']}, {helper.DefaultConfig.profile_values['growth']}, {helper.DefaultConfig.profile_values['messages']}, {helper.DefaultConfig.profile_values['warns']})")

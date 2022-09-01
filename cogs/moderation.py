@@ -18,7 +18,7 @@ class Moderation(commands.Cog):
     async def on_ready(self):
         print("Moderation module loaded.")
 
-    @bridge.bridge_command()
+    @commands.slash_command()
     async def purge(self, ctx, amount: int):
         """Löscht die angegebene Anzahl an Nachrichten"""
         await ctx.channel.purge(limit=amount)
