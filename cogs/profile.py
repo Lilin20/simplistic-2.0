@@ -23,6 +23,11 @@ class Profile(commands.Cog):
     async def set(self, ctx, status):
         await ctx.send("test")
 
+    @status.command()
+    async def reset(self, ctx):
+        db.database.set_status(ctx.author.id, " ")
+        await ctx.respond("Dein Status wurde zurückgesetzt." ephemeral=True)
+
     @discord.slash_command()
     async def profile(self, ctx, member: discord.Member = None):
         """Zeigt das Profil des angegebenen Mitglieds"""
