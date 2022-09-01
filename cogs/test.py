@@ -1,6 +1,8 @@
 import discord
 import sys
-from discord.ext import commands, bridge, pages
+from discord.ext import commands
+from discord.commands import SlashCommandGroup
+from discord.ext import commands, pages
 import os
 
 def getpath():
@@ -9,33 +11,15 @@ def getpath():
 sys.path.insert(1, getpath())
 import database as db
 
-
-class Profile(commands.Cog):
-    """Modul für die Profilfunktionen"""
+class Test(commands.Cog):
+    """Modul für die Testfunktionen"""
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print("Profile module loaded.")
-
-    @bridge.bridge_command()
-    async def profile(self, ctx, member: discord.Member = None):
-        """Zeigt das Profil des angegebenen Mitglieds"""
-        if member is None:
-            member = ctx.author
-
         self.pages = [
-            discord.Embed(title="Simplistic - Perso", description=f"Profil von {member.name}", fields=[
-                discord.EmbedField(name="Name", value=member.name, inline=True),
-                discord.EmbedField(name="ID", value=member.id, inline=True)
-            ]),
+            "Page 1",
             [
-                discord.Embed(title="Simplistic - Economy", description=f"Stats von {member.name}", fields=[
-                    discord.EmbedField(name="Vermögen", value=db.database.get_balance(member.id), inline=True),
-                    discord.EmbedField(name="Raubzüge", value=db.database.has_robbed(member.id), inline=True),
-                    discord.EmbedField(name="Hops genommen", value=db.database.get_robbed(member.id), inline=True)
-                ]),
+                discord.Embed(title="Page 2, Embed 1"),
+                discord.Embed(title="Page 2, Embed 2"),
             ],
             "Page Three",
             discord.Embed(title="Page Four"),
@@ -50,8 +34,6 @@ class Profile(commands.Cog):
                 discord.Embed(title="Page Seven, Embed 2"),
             ],
         ]
-        self.pages[0].set_thumbnail(url=member.avatar.url)
-        self.pages[1][0].set_thumbnail(url=member.avatar.url)
         self.pages[3].set_image(url="https://c.tenor.com/pPKOYQpTO8AAAAAM/monkey-developer.gif")
         self.pages[4].add_field(name="Another Example Field", value="Another Example Value", inline=False)
 
@@ -80,11 +62,21 @@ class Profile(commands.Cog):
             ),
         ]
 
-        paginator = pages.Paginator(pages=self.pages)
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("Test module loaded.")
+
+    def get_pages(self):
+        return self.pages
+
+    pagetest = SlashCommandGroup("pagetest", "Commands for testing ext.pages.")
+
+    @pagetest.command(name="default")
+    async def pagetest_default(self, ctx: discord.ApplicationContext):
+        """Demonstrates using the paginator with the default options."""
+        paginator = pages.Paginator(pages=self.get_pages())
         await paginator.respond(ctx.interaction, ephemeral=False)
 
-
-    
-
 def setup(bot):
-    bot.add_cog(Profile(bot))
+    bot.add_cog(Test(bot))
