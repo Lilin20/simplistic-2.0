@@ -1,3 +1,4 @@
+from ast import Not
 import discord
 from discord.ext import commands, bridge
 from discord.ext.pages import Paginator, Page
@@ -19,6 +20,10 @@ intents = discord.Intents.all()
 
 # Object
 bot = bridge.Bot(command_prefix="-", case_insensitive=True, description=description, intents=intents, activity=discord.Streaming(name="WIP", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+
+# Load Achievement Handler
+a_handler = helper.AchievementHandler()
+a_handler.init()
 
 # Event - Startup
 @bot.event
@@ -54,6 +59,31 @@ async def on_member_join(member):
     if not db.database.check_user(member.id):
         db.database.add_user(member.id, member.name)
         print(f"{member.name} has been added to the database.")
+
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+    db.database.add_message_count(message.author.id, 1)
+    ach_values = a_handler.TextAchievementHandler(message.author)
+    if ach_values is not None:
+        if ach_values[0]:
+            embed = discord.Embed(title="Achievement freigeschaltet!", description=f"{message.author.mention} hat folgendes Achievement freigeschaltet:", color=0x00ff00, fields=[
+                discord.EmbedField(name=ach_values[1], value=ach_values[2], inline=False)
+            ])
+            await message.channel.send(embed=embed)
+
+@bot.listen()
+async def on_application_command(ctx):
+    ach_values_list = [a_handler.EconomyWorkAchievementHandler(ctx.author), a_handler.EconomyMoneyAchievementHandler(ctx.author)]
+    for ach_values in ach_values_list:
+        if ach_values is not None:
+            print(ach_values)
+            if ach_values[0]:
+                embed = discord.Embed(title="Achievement freigeschaltet!", description=f"{ctx.author.mention} hat folgendes Achievement freigeschaltet:", color=0x00ff00, fields=[
+                    discord.EmbedField(name=ach_values[1], value=ach_values[2], inline=False)
+                ])
+                await ctx.send(embed=embed)
 
 @bot.slash_command()
 async def test_msg(ctx):

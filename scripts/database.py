@@ -35,6 +35,12 @@ class Connector:
         else:
             return False
 
+    def get_last_achievement(self, id):
+        self.cursor.execute(f"SELECT * FROM user_achievements WHERE users_id = '{id}' ORDER BY id DESC LIMIT 1")
+        achievement_id = self.cursor.fetchall()[0][2]
+        self.cursor.execute(f"SELECT * FROM achievements WHERE id = '{achievement_id}'")
+        return self.cursor.fetchall()[0]
+
     def get_balance(self, id):
         self.cursor.execute(f"SELECT balance FROM economy WHERE users_id = '{id}'")
         return self.cursor.fetchall()[0][0]
@@ -64,12 +70,63 @@ class Connector:
     def get_server_var(self, var):
         self.cursor.execute(f"SELECT value FROM server_vars WHERE name = '{var}'")
         return self.cursor.fetchall()[0][0]
+
+    def add_counter(self):
+        self.cursor.execute(f"UPDATE server_vars SET value = value + 1 WHERE name = 'counting'")
+
+    def reset_counter(self):
+        self.cursor.execute(f"UPDATE server_vars SET value = 0 WHERE name = 'counting'")
+
+    def get_counting_record(self):
+        self.cursor.execute(f"SELECT value FROM server_vars WHERE name = 'counting_record'")
+        return self.cursor.fetchall()[0][0]
+
+    def set_counting_record(self, value):
+        self.cursor.execute(f"UPDATE server_vars SET value = {value} WHERE name = 'counting_record'")
     
     def add_server_money(self, var, value):
         self.cursor.execute(f"UPDATE server_vars SET value = value + {value} WHERE name = '{var}'")
 
     def add_user(self, id, username):
         self.cursor.execute(f"INSERT INTO users (id, username, level, xp, growth, messages, warns) VALUES ('{id}', '{username}', {helper.DefaultConfig.profile_values['level']}, {helper.DefaultConfig.profile_values['xp']}, {helper.DefaultConfig.profile_values['growth']}, {helper.DefaultConfig.profile_values['messages']}, {helper.DefaultConfig.profile_values['warns']})")
-        self.cursor.execute(f"INSERT INTO economy (users_id, balance, worked,got_robbed, has_robbed) VALUES ('{id}', {helper.DefaultConfig.economy_values['balance']}, {helper.DefaultConfig.economy_values['worked']}, {helper.DefaultConfig.economy_values['got_robbed']}, {helper.DefaultConfig.economy_values['has_robbed']})")
+        self.cursor.execute(f"INSERT INTO economy (users_id, balance, worked, worked_hours, got_robbed, has_robbed, rob_spree) VALUES ('{id}', {helper.DefaultConfig.economy_values['balance']}, {helper.DefaultConfig.economy_values['worked']}, {helper.DefaultConfig.economy_values['worked_hours']}, {helper.DefaultConfig.economy_values['got_robbed']}, {helper.DefaultConfig.economy_values['has_robbed']}, {helper.DefaultConfig.economy_values['rob_spree']})")
+
+    def get_achievements(self, type):
+        self.cursor.execute(f"SELECT * FROM achievements WHERE type = '{type}'")
+        return self.cursor.fetchall()
+
+    def get_user_achievements(self, id):
+        self.cursor.execute(f"SELECT * FROM user_achievements WHERE users_id = '{id}'")
+        return self.cursor.fetchall()
+
+    def get_message_count(self, id):
+        self.cursor.execute(f"SELECT messages FROM users WHERE id = '{id}'")
+        return self.cursor.fetchall()[0][0]
+
+    def add_message_count(self, id, value):
+        self.cursor.execute(f"UPDATE users SET messages = messages + {value} WHERE id = '{id}'")
+
+    def get_worked(self, id):
+        self.cursor.execute(f"SELECT worked FROM economy WHERE users_id = '{id}'")
+        return self.cursor.fetchall()[0][0]
+
+    def add_worked(self, id):
+        self.cursor.execute(f"UPDATE economy SET worked = worked + 1 WHERE users_id = '{id}'")
+
+    def add_worked_hours(self, id, value):
+        self.cursor.execute(f"UPDATE economy SET worked_hours = worked_hours + {value} WHERE users_id = '{id}'")
+
+    def add_has_robbed(self, id):
+        self.cursor.execute(f"UPDATE economy SET has_robbed = has_robbed + 1 WHERE users_id = '{id}'")
+
+    def get_rob_spree(self, id):
+        self.cursor.execute(f"SELECT rob_spree FROM economy WHERE users_id = '{id}'")
+        return self.cursor.fetchall()[0][0]
+
+    def add_rob_spree(self, id):
+        self.cursor.execute(f"UPDATE economy SET rob_spree = rob_spree + 1 WHERE users_id = '{id}'")
+
+    def reset_rob_spree(self, id):
+        self.cursor.execute(f"UPDATE economy SET rob_spree = 0 WHERE users_id = '{id}'")
 
 database = Connector(host, user, password, db)
