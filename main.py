@@ -59,6 +59,10 @@ async def on_member_join(member):
     if not db.database.check_user(member.id):
         db.database.add_user(member.id, member.name)
         print(f"{member.name} has been added to the database.")
+    embed = discord.Embed(title="Simplistic", description=" ", color=0x00ff00)
+    embed.add_field(name="Willkommen", value="auf dem inoffiziellen Discord-Server der TBS1. Bitte wähle unten im Selector eine passende Rolle. Bitte wähle die Rolle die auch zu deiner Klasse passt. Falls du kein Schüler der TBS1 bist, dann nimm bitte die Rolle 'Gast'. Falls du ein Schüler der TBS1 bist, bitten wir dich die Rolle zu nehmen mit der richtigen Klassenbezeichnung. Viel spaß auf unserem Discord-Server!", inline=False)
+    await member.send(embed=embed)
+    await member.send("Simplistic - Role Selector", view=helper.RoleSelectorView())
 
 @bot.event
 async def on_message(message):
@@ -71,6 +75,7 @@ async def on_message(message):
             embed = discord.Embed(title="Achievement freigeschaltet!", description=f"{message.author.mention} hat folgendes Achievement freigeschaltet:", color=0x00ff00, fields=[
                 discord.EmbedField(name=ach_values[1], value=ach_values[2], inline=False)
             ])
+            embed.set_thumbnail(url="https://opengameart.org/sites/default/files/gif_3.gif")
             await message.channel.send(embed=embed)
 
 @bot.listen()
@@ -78,14 +83,15 @@ async def on_application_command(ctx):
     ach_values_list = [a_handler.EconomyWorkAchievementHandler(ctx.author), a_handler.EconomyMoneyAchievementHandler(ctx.author)]
     for ach_values in ach_values_list:
         if ach_values is not None:
-            print(ach_values)
             if ach_values[0]:
                 embed = discord.Embed(title="Achievement freigeschaltet!", description=f"{ctx.author.mention} hat folgendes Achievement freigeschaltet:", color=0x00ff00, fields=[
                     discord.EmbedField(name=ach_values[1], value=ach_values[2], inline=False)
                 ])
+                embed.set_thumbnail(url="https://opengameart.org/sites/default/files/gif_3.gif")
                 await ctx.send(embed=embed)
 
 @bot.slash_command()
+@commands.has_permissions(administrator=True)
 async def test_msg(ctx):
     embed = discord.Embed(title="Simplistic", description=" ", color=0x00ff00)
     embed.add_field(name="Willkommen", value="auf dem inoffiziellen Discord-Server der TBS1. Bitte wähle unten im Selector eine passende Rolle. Bitte wähle die Rolle die auch zu deiner Klasse passt. Falls du kein Schüler der TBS1 bist, dann nimm bitte die Rolle 'Gast'. Falls du ein Schüler der TBS1 bist, bitten wir dich die Rolle zu nehmen mit der richtigen Klassenbezeichnung. Viel spaß auf unserem Discord-Server!", inline=False)

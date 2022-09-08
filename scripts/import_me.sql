@@ -45,6 +45,23 @@ CREATE TABLE IF NOT EXISTS user_achievements (
     FOREIGN KEY(achievements_id) REFERENCES achievements(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS items (
+    id              INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name            VARCHAR(255) NOT NULL,
+    description     VARCHAR(255) NOT NULL,
+    value           INT NOT NULL,
+    type            VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS user_inventory (
+    id              INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    users_id        VARCHAR(255) NOT NULL,
+    items_id        INT NOT NULL,
+    amount          INT NOT NULL,
+    FOREIGN KEY(users_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(items_id) REFERENCES items(id) ON DELETE CASCADE
+);
+
 INSERT INTO server_vars (name, value) VALUES ("steuer", 5);
 INSERT INTO server_vars (name, value) VALUES ("server_money", 0);
 INSERT INTO server_vars (name, value) VALUES ("counting", 0);

@@ -95,6 +95,10 @@ class Connector:
         self.cursor.execute(f"SELECT * FROM achievements WHERE type = '{type}'")
         return self.cursor.fetchall()
 
+    def get_achievement(self, id):
+        self.cursor.execute(f"SELECT * FROM achievements WHERE id = '{id}'")
+        return self.cursor.fetchall()[0]
+
     def get_user_achievements(self, id):
         self.cursor.execute(f"SELECT * FROM user_achievements WHERE users_id = '{id}'")
         return self.cursor.fetchall()
@@ -108,6 +112,10 @@ class Connector:
 
     def get_worked(self, id):
         self.cursor.execute(f"SELECT worked FROM economy WHERE users_id = '{id}'")
+        return self.cursor.fetchall()[0][0]
+    
+    def get_worked_hours(self, id):
+        self.cursor.execute(f"SELECT worked_hours FROM economy WHERE users_id = '{id}'")
         return self.cursor.fetchall()[0][0]
 
     def add_worked(self, id):
@@ -128,5 +136,33 @@ class Connector:
 
     def reset_rob_spree(self, id):
         self.cursor.execute(f"UPDATE economy SET rob_spree = 0 WHERE users_id = '{id}'")
+
+    def add_xp(self, id, value):
+        self.cursor.execute(f"UPDATE users SET xp = xp + {value} WHERE id = '{id}'")
+
+    def get_leveling_info(self, id):
+        self.cursor.execute(f"SELECT level, xp, growth FROM users WHERE id = '{id}'")
+        return self.cursor.fetchall()[0]
+
+    def level_up(self, id):
+        self.cursor.execute(f"UPDATE users SET level = level + 1 WHERE id = '{id}'")
+        self.cursor.execute(f"UPDATE users SET xp = 0 WHERE id = '{id}'")
+        self.cursor.execute(f"UPDATE users SET growth = growth + 0.025 WHERE id = '{id}'")
+
+    def get_leaderboard_level(self):
+        self.cursor.execute(f"SELECT username, level FROM users ORDER BY level DESC")
+        return self.cursor.fetchall()
+
+    def get_leaderboard_money(self):
+        self.cursor.execute(f"SELECT users.username, economy.balance FROM economy INNER JOIN users ON economy.users_id = users.id ORDER BY economy.balance DESC LIMIT 10")
+        return self.cursor.fetchall()
+
+    def get_leaderboard_rob(self):
+        self.cursor.execute(f"SELECT users.username, economy.has_robbed FROM economy INNER JOIN users ON economy.users_id = users.id ORDER BY economy.has_robbed DESC LIMIT 10")
+        return self.cursor.fetchall()
+
+    def get_leaderboard_worked_hours(self):
+        self.cursor.execute(f"SELECT users.username, economy.worked_hours FROM economy INNER JOIN users ON economy.users_id = users.id ORDER BY economy.worked_hours DESC LIMIT 10")
+        return self.cursor.fetchall()
 
 database = Connector(host, user, password, db)

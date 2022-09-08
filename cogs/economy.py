@@ -28,7 +28,8 @@ class Economy(commands.Cog):
     @commands.slash_command()
     @commands.cooldown(1, 3600, commands.BucketType.user)
     async def work(self, ctx):
-        hours = random.randint(1, 8) 
+        """Verdiene Geld durch harte Arbeit!"""
+        hours = random.randint(1, 6) 
         money = (50 * hours)
         tax = (db.database.get_server_var("steuer") / 100) * money
         money = money - tax
@@ -43,7 +44,6 @@ class Economy(commands.Cog):
         db.database.add_balance(ctx.author.id, money)
         db.database.add_worked(ctx.author.id)
         db.database.add_worked_hours(ctx.author.id, hours)
-        # WORKED_HOURS NOCH HOCH ZÄHLEN
         await ctx.reply(embed=embed)
 
     @work.error
@@ -57,6 +57,7 @@ class Economy(commands.Cog):
     @commands.slash_command()
     @commands.cooldown(1, 1800, commands.BucketType.user)
     async def rob(self, ctx, member: discord.Member):
+        """Raube einen User aus und verdiene Geld!"""
         if member == self.bot.user:
             await ctx.respond("Naaaaaaaa HÖR MAL! Noch son Ding Augenring.", ephemeral=True)
             return
@@ -102,6 +103,7 @@ class Economy(commands.Cog):
                         embed = discord.Embed(title="Achievement freigeschaltet!", description=f"{ctx.author.mention} hat folgendes Achievement freigeschaltet:", color=0x00ff00, fields=[
                             discord.EmbedField(name=ach_values[1], value=ach_values[2], inline=False)
                         ])
+                        embed.set_thumbnail(url="https://opengameart.org/sites/default/files/gif_3.gif")
                         await ctx.send(embed=embed)
 
             db.database.add_balance(member.id, -robbed_money)
@@ -130,8 +132,51 @@ class Economy(commands.Cog):
             await ctx.respond("Versuch es erneut in <t:{}:R>".format(int(time.time() + error.retry_after)), ephemeral=True)
         else:
             raise error
-    
 
+    money_admin_group = discord.SlashCommandGroup("money", "Admin-Befehle fürs Geld")
+
+    @money_admin_group.command()
+    @commands.has_permissions(administrator=True)
+    async def add(self, ctx, member: discord.Member, amount: int):
+        """Fügt einen User Geld hinzu."""
+        db.database.add_balance(member.id, amount)
+        await ctx.respond(f"{member.mention} hat den Betrag von {amount} erhalten!", ephemeral=True)
+        await member.send(f"Du hast den Betrag von {amount} erhalten!")
+
+    @money_admin_group.command()
+    @commands.has_permissions(administrator=True)
+    async def remove(self, ctx, member: discord.Member, amount: int):
+        """Entfernt Geld von einem User."""
+        db.database.add_balance(member.id, -amount)
+        await ctx.respond(f"{member.mention} hat den Betrag von {amount} entfernt bekommen!", ephemeral=True)
+    
+    servermoney_group = discord.SlashCommandGroup("servermoney", "Admin-Befehle fürs Servergeld")
+    @servermoney_group.command()
+    @commands.has_permissions(administrator=True)
+    async def add(self, ctx, amount: int):
+        """Fügt dem Server Geld hinzu."""
+        db.database.add_server_money("server_money", amount)
+        await ctx.respond(f"Der Server hat den Betrag von {amount} erhalten!", ephemeral=True)
+
+    @servermoney_group.command()
+    @commands.has_permissions(administrator=True)
+    async def remove(self, ctx, amount: int):
+        """Entfernt Geld vom Server."""
+        db.database.add_server_money("server_money", -amount)
+        await ctx.respond(f"Der Server hat den Betrag von {amount} entfernt bekommen!", ephemeral=True)
+
+    @servermoney_group.command()
+    @commands.has_permissions(administrator=True)
+    async def show(self, ctx):
+        """Zeigt das Servergeld an."""
+        await ctx.respond(f"Der Server hat {db.database.get_server_var('server_money')} SMPL-Coins!", ephemeral=True)
+
+    shop_group = discord.SlashCommandGroup("shop", "Shop-Befehle")
+
+    @shop_group.command()
+    async def show(self, ctx):
+        
+    
 
 def setup(bot):
     bot.add_cog(Economy(bot))

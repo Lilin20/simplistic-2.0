@@ -3,7 +3,7 @@ from discord.utils import get
 import scripts.database as db
 
 class DefaultConfig:
-    profile_values = {'level': 0, 'xp': 0, 'growth': 0, 'messages': 0, 'warns': 0}
+    profile_values = {'level': 1, 'xp': 0, 'growth': 0.25, 'messages': 0, 'warns': 0}
     economy_values = {'balance': 0, 'worked':0, 'worked_hours': 0,'got_robbed': 0, 'has_robbed': 0, 'rob_spree': 0}
     guild = None
     bot = None
