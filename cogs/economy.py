@@ -176,8 +176,11 @@ class Economy(commands.Cog):
     @shop_group.command()
     async def show(self, ctx):
         """Zeigt den Shop an."""
-        pass
-    
+        embed = discord.Embed(title="Simplistic - Shop", color=discord.Colour.green())
+        items = db.database.get_buyable_items()
+        for item in items:
+            embed.add_field(name=item[0], value=f"{item[1]} SMPL-Coins", inline=False)
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(Economy(bot))
