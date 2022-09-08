@@ -50,7 +50,9 @@ CREATE TABLE IF NOT EXISTS items (
     name            VARCHAR(255) NOT NULL,
     description     VARCHAR(255) NOT NULL,
     value           INT NOT NULL,
-    type            VARCHAR(255) NOT NULL
+    type            VARCHAR(255) NOT NULL,
+    rarity          VARCHAR(255) NOT NULL,
+    buyable         TINYINT
 );
 
 CREATE TABLE IF NOT EXISTS user_inventory (
@@ -105,5 +107,34 @@ INSERT INTO achievements (name, description, value, type) VALUES ("Auf der INTER
 INSERT INTO achievements (name, description, value, type) VALUES ("Totenstille und Fingerfertigkeit", "3 mal hintereinander jemanden erfolgreich ausgeraubt.", 3, "economy_rob_spree");
 INSERT INTO achievements (name, description, value, type) VALUES ("System gedribbelt", "5 mal hintereinander jemanden erfolgreich ausgeraubt.", 5, "economy_rob_spree");
 
-INSERT INTO achievements (name, description, value, type) VALUES ("Bug Finder", "Danke für das finden und melden eines Bugs!", 1, "manual");
+INSERT INTO achievements (name, description, valu, Truee, type) VALUES ("Bug Finder", "Danke für das finden und melden eines Bugs!", 1, "manual");
 INSERT INTO achievements (name, description, value, type) VALUES ("Gute Nudel Stern", "Einer der sehr cleanen User!", 1, "manual");
+
+--Shop/Cases Items Common...
+INSERT INTO items (name, description, value, type) VALUES ("Schlagstock", "Verschafft dir einen Bonus für einen Raubzug (5%).", 5, "rob_rate", "common", 1)
+INSERT INTO items (name, description, value, type) VALUES ("Glücksschein", "Kratze 3 Stellen auf und lass dein Glück spielen!", 100, "only_shop", "common", 1)
+INSERT INTO items (name, description, value, type) VALUES ("Geldschein", "Gibt dir einen sofortigen Geldbonus (100 SMPL-C).", 100, "money", "common", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Münze", "Gibt dir einen sofortigen Geldbonus (1 SMPL-C)", 1, "money", "common", 0)
+
+--Shop/Cases Items Uncommon...
+INSERT INTO items (name, description, value, type) VALUES ("Taschenmesser", "Verschafft dir einen Bonus für einen Raubzug (8%).", 8, "rob_rate", "uncommon", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Geldbündel", "Gibt dir einen sofortigen Geldbonus (250 SMPL-C)", 250, "money", "uncommon", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Geldbeutel", "Gibt dir einen sofortigen Geldbonus (300 SMPL-C)", 300, "money", "uncommon", 0)
+
+--Shop/Cases Items Rare...
+INSERT INTO items (name, description, value, type) VALUES ("Klappmesser", "Verschafft dir einen Bonus für einen Raubzug (10%).", 10, "rob_rate", "rare", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Geldsack", "Gibt dir einen sofortigen Geldbonus (350 SMPL-C)", 350, "money", "rare", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Stapel Fuffis", "Gibt dir einen sofortigen Geldbonus (400 SMPL-C)", 400, "money", "rare", 0)
+
+--Shop/Cases Items Super Rare...
+INSERT INTO items (name, description, value, type) VALUES ("Pistole (9mm)", "Verschafft dir einen Bonus für einen Raubzug (15%).", 15, "rob_rate", "super_rare", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Stapel Falschgeld", "Gibt dir einen sofortigen Geldbonus (600 SMPL-C)", 600, "money", "super_rare", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Falschgeld Palette", "Gibt dir einen sofortigen Geldbonus (700 SMPL-C)", 700, "money", "super_rare", 0)
+
+--Shop/Cases Items Mythical...
+INSERT INTO items (name, description, value, type) VALUES ("Barrett .50 cal", "Verchafft dir einen Bonus für einen Raubzug (50%).", 50, "rob_rate", "mythical", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Geldregen", "Gibt jeden einen sofortigen Geldbonus (500 SMPL-C)", 500, "money_rain", "mythical", 0)
+
+--Shop/Cases Items Godly...
+INSERT INTO items (name, description, value, type) VALUES ("Langstrecken Rakete", "Verschafft dir einen Bonus für einen Raubzug (100%)", 100, "rob_rate", "godly", 0)
+INSERT INTO items (name, description, value, type) VALUES ("Koffer voller Gold", "Gibt dir einen sofortigen Geldbonus (2000 SMPL-C)", 2000, "money", "godly", 0)

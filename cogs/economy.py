@@ -175,7 +175,8 @@ class Economy(commands.Cog):
 
     @shop_group.command()
     async def show(self, ctx):
-        
+        """Zeigt den Shop an."""
+        pass
     
 
 def setup(bot):

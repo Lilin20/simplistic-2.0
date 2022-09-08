@@ -165,4 +165,8 @@ class Connector:
         self.cursor.execute(f"SELECT users.username, economy.worked_hours FROM economy INNER JOIN users ON economy.users_id = users.id ORDER BY economy.worked_hours DESC LIMIT 10")
         return self.cursor.fetchall()
 
+    def get_buyable_items(self):
+        self.cursor.execute(f"SELECT * FROM items WHERE buyable = 1")
+        return self.cursor.fetchall()
+
 database = Connector(host, user, password, db)
