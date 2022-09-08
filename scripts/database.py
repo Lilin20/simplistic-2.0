@@ -169,4 +169,11 @@ class Connector:
         self.cursor.execute(f"SELECT * FROM items WHERE buyable = 1")
         return self.cursor.fetchall()
 
+    def get_buyable_item(self, item):
+        self.cursor.execute(f"SELECT * FROM items WHERE name = '{item}'")
+        return self.cursor.fetchall()[0]
+
+    def add_item(self, id, item):
+        self.cursor.execute(f"INSERT INTO user_items (users_id, items_id, amount) VALUES ('{id}', '{item}', 1)")
+
 database = Connector(host, user, password, db)

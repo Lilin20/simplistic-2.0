@@ -179,8 +179,23 @@ class Economy(commands.Cog):
         embed = discord.Embed(title="Simplistic - Shop", color=discord.Colour.green())
         items = db.database.get_buyable_items()
         for item in items:
-            embed.add_field(name=item[0], value=f"{item[1]} SMPL-Coins", inline=False)
+            embed.add_field(name=item[1], value=f"{item[7]} SMPL-Coins\n/shop buy {item[1].lower()}", inline=False)
         await ctx.respond(embed=embed)
+
+    @shop_group.command()
+    async def buy(self, ctx, item: str):
+        """Kauft ein Item aus dem Shop."""
+        item = item.lower()
+        item_info = db.database.get_buyable_item(item)
+        if item_info is None:
+            await ctx.respond(f"Das Item {item} existiert nicht!", ephemeral=True)
+            return
+        if db.database.get_balance(ctx.author.id) < item_info[7]:
+            await ctx.respond(f"Du hast nicht genug Geld um {item_info[1]} zu kaufen!", ephemeral=True)
+            return
+        db.database.add_balance(ctx.author.id, -item_info[7])
+        db.database.add_item(ctx.author.id, item_info[0])
+        await ctx.respond(f"Du hast {item_info[1]} für {item_info[7]} gekauft!", ephemeral=True)
 
 def setup(bot):
     bot.add_cog(Economy(bot))
