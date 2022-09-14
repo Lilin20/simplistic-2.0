@@ -166,14 +166,42 @@ class Connector:
         return self.cursor.fetchall()
 
     def get_buyable_items(self):
-        self.cursor.execute(f"SELECT * FROM items WHERE buyable = 1")
+        self.cursor.execute(f"SELECT * FROM shop_items")
         return self.cursor.fetchall()
 
     def get_buyable_item(self, item):
-        self.cursor.execute(f"SELECT * FROM items WHERE name = '{item}'")
+        self.cursor.execute(f"SELECT * FROM shop_items WHERE name = '{item}'")
         return self.cursor.fetchall()[0]
 
-    def add_item(self, id, item):
-        self.cursor.execute(f"INSERT INTO user_items (users_id, items_id, amount) VALUES ('{id}', '{item}', 1)")
+    def add_case_item(self, id, item):
+        self.cursor.execute(f"INSERT INTO user_case_inventory (users_id, items_id, amount) VALUES ('{id}', '{item}', 1)")
+
+    def add_shop_item(self, id, item):
+        self.cursor.execute(f"INSERT INTO user_shop_inventory (users_id, items_id, amount) VALUES ('{id}', '{item}', 1)")
+
+    def add_case(self, id):
+        self.cursor.execute(f"UPDATE economy SET cases = cases + 1 WHERE users_id = '{id}'")
+
+    def remove_case(self, id):
+        self.cursor.execute(f"UPDATE economy SET cases = cases - 1 WHERE users_id = '{id}'")
+
+    def get_case_amount(self, id):
+        self.cursor.execute(f"SELECT cases FROM economy WHERE users_id = '{id}'")
+        return self.cursor.fetchall()[0][0]
+
+    def get_items_by_rarity(self, rarity):
+        self.cursor.execute(f"SELECT * FROM case_items WHERE rarity = '{rarity}'")
+        return self.cursor.fetchall()
+
+    def get_key_amount(self, id):
+        self.cursor.execute(f"SELECT case_keys FROM economy WHERE users_id = '{id}'")
+        return self.cursor.fetchall()[0][0]
+
+    def add_key(self, id):
+        self.cursor.execute(f"UPDATE economy SET case_keys = case_keys + 1 WHERE users_id = '{id}'")
+
+    def get_shop_inventory(self, id):
+        self.cursor.execute(f"SELECT * FROM user_shop_inventory INNER JOIN shop_items ON user_shop_inventory.items_id = shop_items.id WHERE users_id = '{id}'")
+        return self.cursor.fetchall()
 
 database = Connector(host, user, password, db)

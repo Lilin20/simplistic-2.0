@@ -1,4 +1,5 @@
 from ast import main
+from optparse import Option
 import discord
 import sys
 from discord.ext import commands
@@ -179,7 +180,7 @@ class Economy(commands.Cog):
         embed = discord.Embed(title="Simplistic - Shop", color=discord.Colour.green())
         items = db.database.get_buyable_items()
         for item in items:
-            embed.add_field(name=item[1], value=f"{item[7]} SMPL-Coins\n/shop buy {item[1].lower()}", inline=False)
+            embed.add_field(name=f"{item[1]}\n{item[2]}", value=f"{item[3]} SMPL-Coins\n/shop buy {item[1].lower()}", inline=False)
         await ctx.respond(embed=embed)
 
     @shop_group.command()
@@ -190,12 +191,29 @@ class Economy(commands.Cog):
         if item_info is None:
             await ctx.respond(f"Das Item {item} existiert nicht!", ephemeral=True)
             return
-        if db.database.get_balance(ctx.author.id) < item_info[7]:
+        if db.database.get_balance(ctx.author.id) < item_info[3]:
             await ctx.respond(f"Du hast nicht genug Geld um {item_info[1]} zu kaufen!", ephemeral=True)
             return
-        db.database.add_balance(ctx.author.id, -item_info[7])
-        db.database.add_item(ctx.author.id, item_info[0])
-        await ctx.respond(f"Du hast {item_info[1]} für {item_info[7]} gekauft!", ephemeral=True)
+        db.database.add_balance(ctx.author.id, -item_info[3])
+        if item_info[1] == "Schlüssel":
+            db.database.add_key(ctx.author.id)
+            await ctx.respond(f"Du hast {item_info[1]} für {item_info[3]} gekauft!", ephemeral=True)
+            return
+        db.database.add_shop_item(ctx.author.id, item_info[0])
+        await ctx.respond(f"Du hast {item_info[1]} für {item_info[3]} gekauft!", ephemeral=True)
+
+    inventory_group = discord.SlashCommandGroup("inventory", "Inventar-Befehle")
+    inventories =  ["shop", "case"]
+    @inventory_group.command()
+    async def show(self, ctx, inventory: discord.Option(str, "Wähle ein Inventar aus.", choices=inventories)):
+        """Zeigt eines deiner Inventare an."""
+        if inventory == "shop":
+            embed = discord.Embed(title="Simplistic - Shop-Inventar", color=discord.Colour.green())
+            items = db.database.get_shop_inventory(ctx.author.id)
+            for item in items:
+                embed.add_field(name=f"{item[5]}", value=f"{item[6]}", inline=False)
+            await ctx.respond(embed=embed)
+        
 
 def setup(bot):
     bot.add_cog(Economy(bot))

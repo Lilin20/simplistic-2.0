@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS economy (
     got_robbed    INT NOT NULL,
     has_robbed    INT NOT NULL,
     rob_spree     INT NOT NULL,
+    cases         INT NOT NULL DEFAULT(0),
+    case_keys     INT NOT NULL DEFAULT(0),
     FOREIGN KEY(users_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -45,33 +47,46 @@ CREATE TABLE IF NOT EXISTS user_achievements (
     FOREIGN KEY(achievements_id) REFERENCES achievements(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS items (
+CREATE TABLE IF NOT EXISTS case_items (
     id              INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name            VARCHAR(255) NOT NULL,
     description     VARCHAR(255) NOT NULL,
     value           INT NOT NULL,
     type            VARCHAR(255) NOT NULL,
-    rarity          VARCHAR(255) NOT NULL,
-    buyable         TINYINT,
-    price           INT NOT NULL DEFAULT(0)
+    rarity          VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS user_inventory (
+CREATE TABLE IF NOT EXISTS shop_items (
+    id              INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name            VARCHAR(255) NOT NULL,
+    description     VARCHAR(255) NOT NULL,
+    price           INT NOT NULL,
+    type            VARCHAR(255) NOT NULL,
+    role_id         VARCHAR(255) NOT NULL DEFAULT("0")
+);
+
+CREATE TABLE IF NOT EXISTS user_case_inventory (
     id              INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     users_id        VARCHAR(255) NOT NULL,
     items_id        INT NOT NULL,
     amount          INT NOT NULL,
     FOREIGN KEY(users_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY(items_id) REFERENCES items(id) ON DELETE CASCADE
+    FOREIGN KEY(items_id) REFERENCES case_items(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_shop_inventory (
+    id              INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    users_id        VARCHAR(255) NOT NULL,
+    items_id        INT NOT NULL,
+    amount          INT NOT NULL,
+    FOREIGN KEY(users_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(items_id) REFERENCES shop_items(id) ON DELETE CASCADE
 );
 
 INSERT INTO server_vars (name, value) VALUES ("steuer", 5);
 INSERT INTO server_vars (name, value) VALUES ("server_money", 0);
 INSERT INTO server_vars (name, value) VALUES ("counting", 0);
 INSERT INTO server_vars (name, value) VALUES ("counting_record", 0);
-
-
-
 
 
 --Achievement Inserts...
@@ -111,31 +126,36 @@ INSERT INTO achievements (name, description, value, type) VALUES ("System gedrib
 INSERT INTO achievements (name, description, value, type) VALUES ("Bug Finder", "Danke für das finden und melden eines Bugs!", 1, "manual");
 INSERT INTO achievements (name, description, value, type) VALUES ("Gute Nudel Stern", "Einer der sehr cleanen User!", 1, "manual");
 
---Shop/Cases Items Common...
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Schlagstock", "Verschafft dir einen Bonus für einen Raubzug (5%).", 5, "rob_rate", "common", 1, 200);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Glücksschein", "Kratze 3 Stellen auf und lass dein Glück spielen!", 100, "only_shop", "common", 1, 250);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Geldschein", "Gibt dir einen sofortigen Geldbonus (100 SMPL-C).", 100, "money", "common", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Münze", "Gibt dir einen sofortigen Geldbonus (1 SMPL-C)", 1, "money", "common", 0, 0);
+--CASES---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--Case items Common...
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Schlagstock", "Verschafft dir einen Bonus für einen Raubzug (5%).", 5, "rob_rate", "common");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Glücksschein", "Kratze 3 Stellen auf und lass dein Glück spielen!", 100, "only_shop", "common");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Geldschein", "Gibt dir einen sofortigen Geldbonus (100 SMPL-C).", 100, "money", "common");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Münze", "Gibt dir einen sofortigen Geldbonus (1 SMPL-C)", 1, "money", "common");
 
---Shop/Cases Items Uncommon...
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Taschenmesser", "Verschafft dir einen Bonus für einen Raubzug (8%).", 8, "rob_rate", "uncommon", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Geldbündel", "Gibt dir einen sofortigen Geldbonus (250 SMPL-C)", 250, "money", "uncommon", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Geldbeutel", "Gibt dir einen sofortigen Geldbonus (300 SMPL-C)", 300, "money", "uncommon", 9, 0);
+--Case items Uncommon...
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Taschenmesser", "Verschafft dir einen Bonus für einen Raubzug (8%).", 8, "rob_rate", "uncommon");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Geldbündel", "Gibt dir einen sofortigen Geldbonus (250 SMPL-C)", 250, "money", "uncommon");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Geldbeutel", "Gibt dir einen sofortigen Geldbonus (300 SMPL-C)", 300, "money", "uncommon");
 
---Shop/Cases Items Rare...
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Klappmesser", "Verschafft dir einen Bonus für einen Raubzug (10%).", 10, "rob_rate", "rare", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Geldsack", "Gibt dir einen sofortigen Geldbonus (350 SMPL-C)", 350, "money", "rare", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Stapel Fuffis", "Gibt dir einen sofortigen Geldbonus (400 SMPL-C)", 400, "money", "rare", 0, 0);
+--Case items Rare...
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Klappmesser", "Verschafft dir einen Bonus für einen Raubzug (10%).", 10, "rob_rate", "rare");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Geldsack", "Gibt dir einen sofortigen Geldbonus (350 SMPL-C)", 350, "money", "rare");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Stapel Fuffis", "Gibt dir einen sofortigen Geldbonus (400 SMPL-C)", 400, "money", "rare");
 
---Shop/Cases Items Super Rare...
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Pistole (9mm)", "Verschafft dir einen Bonus für einen Raubzug (15%).", 15, "rob_rate", "super_rare", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Stapel Falschgeld", "Gibt dir einen sofortigen Geldbonus (600 SMPL-C)", 600, "money", "super_rare", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Falschgeld Palette", "Gibt dir einen sofortigen Geldbonus (700 SMPL-C)", 700, "money", "super_rare", 0, 0);
+--Case items Epic...
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Pistole (9mm)", "Verschafft dir einen Bonus für einen Raubzug (15%).", 15, "rob_rate", "epic");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Stapel Falschgeld", "Gibt dir einen sofortigen Geldbonus (600 SMPL-C)", 600, "money", "epic");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Falschgeld Palette", "Gibt dir einen sofortigen Geldbonus (700 SMPL-C)", 700, "money", "epic");
 
---Shop/Cases Items Mythical...
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Barrett .50 cal", "Verchafft dir einen Bonus für einen Raubzug (50%).", 50, "rob_rate", "mythical", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Geldregen", "Gibt jeden einen sofortigen Geldbonus (500 SMPL-C)", 500, "money_rain", "mythical", 0, 0);
+--Case items Mythical...
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Barrett .50 cal", "Verchafft dir einen Bonus für einen Raubzug (50%).", 50, "rob_rate", "mythical");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Geldregen", "Gibt jeden einen sofortigen Geldbonus (500 SMPL-C)", 500, "money_rain", "mythical");
 
---Shop/Cases Items Godly...
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Langstrecken Rakete", "Verschafft dir einen Bonus für einen Raubzug (100%)", 100, "rob_rate", "godly", 0, 0);
-INSERT INTO items (name, description, value, type, rarity, buyable, price) VALUES ("Koffer voller Gold", "Gibt dir einen sofortigen Geldbonus (2000 SMPL-C)", 2000, "money", "godly", 0, 0);
+--Case items Legendary...
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Langstrecken Rakete", "Verschafft dir einen Bonus für einen Raubzug (100%)", 100, "rob_rate", "legendary");
+INSERT INTO case_items (name, description, value, type, rarity) VALUES ("Koffer voller Gold", "Gibt dir einen sofortigen Geldbonus (2000 SMPL-C)", 2000, "money", "legendary");
+--CASES END------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--SHOP-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO shop_items (name, description, price, type) VALUES ("Glückslos", "Kratze 3 Stellen auf und lass dein Glück spielen!", 100, "random_win");
+INSERT INTO shop_items (name, description, price, type) VALUES ("Schlüssel", "Öffne eine Kiste mit diesem Schlüssel!", 250, "key");
