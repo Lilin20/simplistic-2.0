@@ -27,7 +27,7 @@ class Economy(commands.Cog):
         print("Economy module loaded.")
 
     @commands.slash_command()
-    @commands.cooldown(1, 3600, commands.BucketType.user)
+    @commands.cooldown(1, 1800, commands.BucketType.user)
     async def work(self, ctx):
         """Verdiene Geld durch harte Arbeit!"""
         hours = random.randint(1, 6) 

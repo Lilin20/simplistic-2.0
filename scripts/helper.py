@@ -7,6 +7,7 @@ class DefaultConfig:
     economy_values = {'balance': 0, 'worked':0, 'worked_hours': 0,'got_robbed': 0, 'has_robbed': 0, 'rob_spree': 0}
     guild = None
     bot = None
+    maintenance = True
 
 class AchievementHandler:
     def __init__(self):

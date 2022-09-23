@@ -26,6 +26,7 @@ class Cases(commands.Cog):
             return
         if random.choices([True, False], weights=[5, 95])[0]:
             embed = discord.Embed(title="Simplistic - Cases", description=f"{message.author.name} hat eine Kiste gedroppt bekommen!", color=0x00ff00)
+            db.database.add_case(message.author.id)
             await message.channel.send(embed=embed)
 
     cases_group = discord.SlashCommandGroup("case", "Cases-Befehle")

@@ -12,8 +12,8 @@ c_parser.read(os.path.dirname(os.path.realpath(__file__))+"/config/config.ini")
 
 # Information zum Bot
 description = """ Simplistic 2.0 - Kranker Discord-Bot """
-version = "0.1"
-maintenance = False
+version = "2.0"
+maintenance = True
 
 # Intents
 intents = discord.Intents.all()
@@ -91,6 +91,26 @@ async def on_application_command(ctx):
                 await ctx.send(embed=embed)
 
 @bot.slash_command()
+async def info(ctx):
+    dev_user = await bot.fetch_user(232109327626797056)
+    embed = discord.Embed(title="Simplistic 2.0", description=" ", color=0x00ff00)
+    embed.add_field(name="Version", value=version, inline=False)
+    embed.add_field(name="Entwickler", value="Lilin#1343", inline=False)
+    if maintenance:
+        embed.add_field(name="Status", value="Wartungsarbeiten", inline=False)
+    else:
+        embed.add_field(name="Status", value="Online", inline=False)
+    embed.set_thumbnail(url=dev_user.avatar.url)
+    await ctx.reply(embed=embed)
+
+@bot.slash_command()
+@commands.has_permissions(administrator=True)
+async def change_status(ctx, status):
+    await bot.change_presence(activity=discord.Game(name=status))
+
+
+
+@bot.slash_command()
 @commands.has_permissions(administrator=True)
 async def test_msg(ctx):
     embed = discord.Embed(title="Simplistic", description=" ", color=0x00ff00)
@@ -105,6 +125,7 @@ async def on_command_error(ctx, error):
         await ctx.send(embed=embedVar)
 
 @bot.slash_command(help="Lädt ein Modul neu.")
+@commands.has_permissions(administrator=True)
 async def reload(ctx, extension):
     if ctx.author.guild_permissions.administrator:
         bot.unload_extension(f'cogs.{extension}')
@@ -112,22 +133,17 @@ async def reload(ctx, extension):
         await ctx.send(f"Successfully reloaded the '{extension}' module!")
 
 @bot.slash_command(help="Lädt ein Modul.")
+@commands.has_permissions(administrator=True)
 async def load(ctx, extension):
     if ctx.author.guild_permissions.administrator:
         bot.load_extension(f'cogs.{extension}')
         await ctx.send(f"Successfully loaded the '{extension}' module!")
 
-for filename in os.listdir(os.path.dirname(os.path.realpath(__file__))+"/cogs"):
-    if filename.endswith('.py'):
-        bot.load_extension(f'cogs.{filename[:-3]}')
-
-#@bot.event
-#async def on_member_join(member):
-#    db.database.execute(f'SELECT d_id FROM userdata WHERE d_id = "{member.id}"')
-#    result = db.database.fetchall()
-#    joined = member.joined_at.strftime("%d.%m.%Y")
-#    if not result:
-#        db.database.execute(f'INSERT INTO userdata (d_id, lvl, warns, msg, join_date, xp, growth) VALUES ({member.id}, 0, 0, 0, "{joined}", 0, 0.25)')
-#        db.database.execute(f'INSERT INTO economy (d_id) VALUES ({member.id})')
+if maintenance == False:
+    for filename in os.listdir(os.path.dirname(os.path.realpath(__file__))+"/cogs"):
+        if filename.endswith('.py'):
+            bot.load_extension(f'cogs.{filename[:-3]}')
+else:
+    print("Bot is in maintenance mode!")
 
 bot.run(c_parser.get('Bot', 'token'))
