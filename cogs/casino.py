@@ -56,7 +56,7 @@ class Casino(commands.Cog):
             
             if message.author == ctx.author:
                 if message.content == "higher" or message.content == "Higher":
-                    if player_number < bot_number:
+                    if player_number > bot_number:
                         print("test")
                         embed = discord.Embed(title="Simplistic - Casino", description=f"{ctx.author.name} hat die Runde HoL verloren!", color=0x00ff00, fields=[
                             discord.EmbedField(name="Deine Zahl", value=player_number, inline=True),
@@ -76,7 +76,7 @@ class Casino(commands.Cog):
                         return
 
                 elif message.content == "lower" or message.content == "Lower":
-                    if player_number > bot_number:
+                    if player_number < bot_number:
                         embed = discord.Embed(title="Simplistic - Casino", description=f"{ctx.author.name} hat die Runde HoL verloren!", color=0x00ff00, fields=[
                             discord.EmbedField(name="Deine Zahl", value=player_number, inline=True),
                             discord.EmbedField(name="Bot Zahl", value=bot_number, inline=True)])

@@ -13,7 +13,7 @@ c_parser.read(os.path.dirname(os.path.realpath(__file__))+"/config/config.ini")
 # Information zum Bot
 description = """ Simplistic 2.0 - Kranker Discord-Bot """
 version = "2.0"
-maintenance = True
+maintenance = False
 
 # Intents
 intents = discord.Intents.all()
@@ -49,7 +49,10 @@ async def on_ready():
     print("Checking for new users...")
     async for member in guild.fetch_members(limit=None):
         if not db.database.check_user(member.id):
-            db.database.add_user(member.id, member.name)
+            try:
+                db.database.add_user(member.id, member.name)
+            except:
+                pass
             print(f"{member.name} has been added to the database.")
     print("Done")
     ##################################################################
