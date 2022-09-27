@@ -66,7 +66,7 @@ class Fun(commands.Cog):
     @commands.slash_command()
     async def dice(self, ctx):
         """Wirft einen Würfel"""
-        await ctx.send(f"Du hast eine {random.randint(1, 6)} gewürfelt.")
+        await ctx.reply(f"{ctx.author.name} hat eine {random.randint(1, 6)} gewürfelt.")
 
     @commands.slash_command()
     async def eightball(self, ctx, question):
@@ -79,8 +79,9 @@ class Fun(commands.Cog):
     @commands.slash_command()
     async def vote(self, ctx, *, question):
         """Erstellt eine Umfrage"""
+        await ctx.reply("Umfrage wird erstellt...", ephemeral=True)
         embed = discord.Embed(title="Simplistic - Vote", description=f"{question}", color=0x00ff00)
-        message = await ctx.reply(embed=embed)
+        message = await ctx.send(embed=embed)
         await message.add_reaction('✅')
         await message.add_reaction('❌')
 
@@ -88,11 +89,12 @@ class Fun(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def giveaway(self, ctx, *, time_limit: int, what, desc, from_who: discord.Member):
         """Startet ein Giveaway"""
+        await ctx.reply("Giveaway wird erstellt...", ephemeral=True)
         embed = discord.Embed(title="Simplistic - Giveaway", description=f"Giveaway von {from_who.mention}", color=0x00ff00, fields=[
             discord.EmbedField(name=what, value=desc, inline=False),
             discord.EmbedField(name="Dauer", value="<t:{}:R>".format(int(time.time() + time_limit)))
             ])
-        message = await ctx.respond(embed=embed)
+        message = await ctx.send(embed=embed)
         await message.add_reaction('🎉')
 
         await asyncio.sleep(int(time_limit))
@@ -117,7 +119,7 @@ class Fun(commands.Cog):
         embed = discord.Embed(title="Simplistic - Leaderboard", description="Level Leaderboard", color=0x00ff00)
         for id, user in enumerate(db.database.get_leaderboard_level()):
             embed.add_field(name=f'{id+1} - {user[0]}', value=f'Aktuelles Level: **{user[1]}**', inline=False)
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @leaderboard_group.command()
     async def money(self, ctx):
@@ -125,7 +127,7 @@ class Fun(commands.Cog):
         embed = discord.Embed(title="Simplistic - Leaderboard", description="Geld Leaderboard", color=0x00ff00)
         for id, user in enumerate(db.database.get_leaderboard_money()):
             embed.add_field(name=f'{id+1} - {user[0]}', value=f'Aktuelles Vermögen: **{user[1]}**', inline=False)
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @leaderboard_group.command()
     async def rob(self, ctx):
@@ -133,7 +135,7 @@ class Fun(commands.Cog):
         embed = discord.Embed(title="Simplistic - Leaderboard", description="Räuber Leaderboard", color=0x00ff00)
         for id, user in enumerate(db.database.get_leaderboard_rob()):
             embed.add_field(name=f'{id+1} - {user[0]}', value=f'Erfolgreiche Raubzüge: **{user[1]}**', inline=False)
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @leaderboard_group.command()
     async def work(self, ctx):
@@ -141,7 +143,7 @@ class Fun(commands.Cog):
         embed = discord.Embed(title="Simplistic - Leaderboard", description="Arbeitsstunden Leaderboard", color=0x00ff00)
         for id, user in enumerate(db.database.get_leaderboard_worked_hours()):
             embed.add_field(name=f'{id+1} - {user[0]}', value=f'Arbeitsstunden: **{user[1]}**', inline=False)
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
 def setup(bot):
     bot.add_cog(Fun(bot))

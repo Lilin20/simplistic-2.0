@@ -138,11 +138,18 @@ class Economy(commands.Cog):
 
     @money_admin_group.command()
     @commands.has_permissions(administrator=True)
-    async def add(self, ctx, member: discord.Member, amount: int):
+    async def add(self, ctx, member: discord.Member, amount: int, reason: str):
         """Fügt einen User Geld hinzu."""
         db.database.add_balance(member.id, amount)
-        await ctx.respond(f"{member.mention} hat den Betrag von {amount} erhalten!", ephemeral=True)
-        await member.send(f"Du hast den Betrag von {amount} erhalten!")
+        await ctx.respond(f"{member.mention} hat den Betrag von {amount} erhalten!, Grund: {reason}", ephemeral=True)
+        await member.send(f"Du hast den Betrag von {amount} erhalten! Grund: {reason}")
+
+    @add.error
+    async def add_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.respond("Du hast keine Berechtigung diesen Befehl auszuführen!", ephemeral=True)
+        else:
+            raise error
 
     @money_admin_group.command()
     @commands.has_permissions(administrator=True)
@@ -150,6 +157,13 @@ class Economy(commands.Cog):
         """Entfernt Geld von einem User."""
         db.database.add_balance(member.id, -amount)
         await ctx.respond(f"{member.mention} hat den Betrag von {amount} entfernt bekommen!", ephemeral=True)
+
+    @remove.error
+    async def remove_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.respond("Du hast keine Berechtigung diesen Befehl auszuführen!", ephemeral=True)
+        else:
+            raise error
     
     servermoney_group = discord.SlashCommandGroup("servermoney", "Admin-Befehle fürs Servergeld")
     @servermoney_group.command()
@@ -159,6 +173,13 @@ class Economy(commands.Cog):
         db.database.add_server_money("server_money", amount)
         await ctx.respond(f"Der Server hat den Betrag von {amount} erhalten!", ephemeral=True)
 
+    @add.error
+    async def add_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.respond("Du hast keine Berechtigung diesen Befehl auszuführen!", ephemeral=True)
+        else:
+            raise error
+
     @servermoney_group.command()
     @commands.has_permissions(administrator=True)
     async def remove(self, ctx, amount: int):
@@ -166,11 +187,25 @@ class Economy(commands.Cog):
         db.database.add_server_money("server_money", -amount)
         await ctx.respond(f"Der Server hat den Betrag von {amount} entfernt bekommen!", ephemeral=True)
 
+    @remove.error
+    async def remove_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.respond("Du hast keine Berechtigung diesen Befehl auszuführen!", ephemeral=True)
+        else:
+            raise error
+
     @servermoney_group.command()
     @commands.has_permissions(administrator=True)
     async def show(self, ctx):
         """Zeigt das Servergeld an."""
         await ctx.respond(f"Der Server hat {db.database.get_server_var('server_money')} SMPL-Coins!", ephemeral=True)
+
+    @show.error
+    async def show_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.respond("Du hast keine Berechtigung diesen Befehl auszuführen!", ephemeral=True)
+        else:
+            raise error
 
     shop_group = discord.SlashCommandGroup("shop", "Shop-Befehle")
 

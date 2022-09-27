@@ -28,13 +28,13 @@ class Casino(commands.Cog):
     async def hol(self, ctx, amount: int):
         user_balance = db.database.get_balance(ctx.author.id)
         if amount > self.max_bet:
-            await ctx.reply("Du kannst nicht mehr als 500 SMPL-Coins setzen!")
+            await ctx.reply(f"{ctx.author.name}, du kannst nicht mehr als 500 SMPL-Coins setzen!")
             return
         if amount <= 0:
-            await ctx.reply("Du kannst nicht weniger als 1 SMPL-Coin setzen!")
+            await ctx.reply(f"{ctx.author.name}, du kannst nicht weniger als 1 SMPL-Coin setzen!")
             return
         if user_balance < amount:
-            await ctx.reply("Du hast nicht genug SMPL-Coins!")
+            await ctx.reply(f"{ctx.author.name}, du hast nicht genug SMPL-Coins!")
             return
         
         bot_number = random.randint(1, 50)
@@ -108,13 +108,13 @@ class Casino(commands.Cog):
         etage = 1
         user_balance = db.database.get_balance(ctx.author.id)
         if amount > self.max_bet:
-            await ctx.reply("Du kannst nicht mehr als 500 SMPL-Coins setzen!")
+            await ctx.reply(f"{ctx.author.name}, du kannst nicht mehr als 500 SMPL-Coins setzen!")
             return
         if amount <= 0:
-            await ctx.reply("Du kannst nicht weniger als 1 SMPL-Coin setzen!")
+            await ctx.reply(f"{ctx.author.name}, du kannst nicht weniger als 1 SMPL-Coin setzen!")
             return
         if user_balance < amount:
-            await ctx.reply("Du hast nicht genug SMPL-Coins!")
+            await ctx.reply(f"{ctx.author.name}, du hast nicht genug SMPL-Coins!")
             return
 
         embed = discord.Embed(title="Simplistic - Casino", description=f"{ctx.author.name} hat eine Runde Tower gestartet!", color=0x00ff00, fields=[

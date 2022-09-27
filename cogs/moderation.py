@@ -25,6 +25,11 @@ class Moderation(commands.Cog):
         await ctx.channel.purge(limit=amount)
         await ctx.send(f"{amount} Nachrichten wurden gelöscht.", delete_after=5)
 
+    @purge.error
+    async def purge_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("Du hast keine Berechtigung diesen Command auszuführen.", delete_after=5)
+
     @commands.slash_command()
     @commands.has_permissions(administrator=True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
@@ -32,12 +37,22 @@ class Moderation(commands.Cog):
         await member.kick(reason=reason)
         await ctx.send(f"{member.mention} wurde gekickt.", delete_after=5)
 
+    @kick.error
+    async def kick_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("Du hast keine Berechtigung diesen Command auszuführen.", delete_after=5)
+
     @commands.slash_command()
     @commands.has_permissions(administrator=True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
         """Bant den angegebenen User"""
         await member.ban(reason=reason)
         await ctx.send(f"{member.mention} wurde gebannt.", delete_after=5)
+
+    @ban.error
+    async def ban_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("Du hast keine Berechtigung diesen Command auszuführen.", delete_after=5)
 
     @commands.slash_command()
     @commands.has_permissions(administrator=True)
@@ -53,6 +68,11 @@ class Moderation(commands.Cog):
                 await ctx.guild.unban(user)
                 await ctx.send(f"{user.mention} wurde entbannt.", delete_after=5)
                 return
+
+    @unban.error
+    async def unban_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("Du hast keine Berechtigung diesen Command auszuführen.", delete_after=5)
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

@@ -27,7 +27,7 @@ class Cases(commands.Cog):
         if random.choices([True, False], weights=[5, 95])[0]:
             embed = discord.Embed(title="Simplistic - Cases", description=f"{message.author.name} hat eine Kiste gedroppt bekommen!", color=0x00ff00)
             db.database.add_case(message.author.id)
-            await message.channel.send(embed=embed)
+            await message.channel.send(embed=embed, delete_after=5)
 
     cases_group = discord.SlashCommandGroup("case", "Cases-Befehle")
     @cases_group.command()
@@ -48,7 +48,7 @@ class Cases(commands.Cog):
                 discord.EmbedField(name="Item", value=item[1], inline=True),
                 discord.EmbedField(name="Rarity", value=rarity, inline=True)
             ])
-            await ctx.send(embed=embed)
+            await ctx.reply(embed=embed)
 
 
 def setup(bot):
