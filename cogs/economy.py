@@ -85,7 +85,7 @@ class Economy(commands.Cog):
             discord.EmbedField(name="Ausrauben", value=f"Du versuchst {member.name} auszurauben...", inline=True)
         ]))
 
-        choice = random.choices([True, False], weights=[0.99, 0.01])[0]
+        choice = random.choices([True, False], weights=[0.2, 0.8])[0]
         if choice:
             await asyncio.sleep(random.randrange(3, 6))
             await saved_embed.edit_original_message(embed=discord.Embed(title="Simplistic - Diebstahl", color=discord.Colour.green(), fields=[
@@ -109,7 +109,7 @@ class Economy(commands.Cog):
 
             db.database.add_balance(member.id, -robbed_money)
         else:
-            if (random.choices([True, False], weights=[0.1, 0.9])[0]):
+            if (random.choices([True, False], weights=[0.8, 0.2])[0]):
                 await asyncio.sleep(random.randrange(3, 6))
                 await saved_embed.edit_original_message(embed=discord.Embed(title="Simplistic - Diebstahl", color=discord.Colour.red(), fields=[
                     discord.EmbedField(name="Ausrauben", value=f"{member.mention} ist entkommen!", inline=True)
