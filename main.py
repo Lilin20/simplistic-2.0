@@ -1,6 +1,6 @@
-from ast import Not
+import asyncio
 import discord
-from discord.ext import commands, bridge
+from discord.ext import commands, bridge, tasks
 from discord.ext.pages import Paginator, Page
 import os
 import configparser
@@ -56,6 +56,11 @@ async def on_ready():
             print(f"{member.name} has been added to the database.")
     print("Done")
     ##################################################################
+
+@tasks.loop(count=None)
+async def keep_db_connection():
+    db.database.cursor.execute("SELECT 1")
+    asyncio.sleep(1800)
 
 @bot.event
 async def on_member_join(member):
