@@ -37,7 +37,7 @@ class Profile(commands.Cog):
             embed = discord.Embed(title="Simplistic - Level UP", description=f"{message.author.mention} hat Level {leveling_info[0] + 1} erreicht!", color=0x00ff00)
             embed.set_thumbnail(url="https://monophy.com/media/aQu0Douf5MM8nhZBy9/monophy.gif")
             embed.set_footer(text="Keep grinding!")
-            await message.channel.send(embed=embed)
+            await message.channel.send(embed=embed, delete_after=5)
 
     status = discord.SlashCommandGroup('status', "Bearbeite deinen Status")
     @status.command()

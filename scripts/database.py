@@ -264,4 +264,9 @@ class Connector:
         self.cursor.execute(f"SELECT * FROM user_shop_inventory INNER JOIN shop_items ON user_shop_inventory.items_id = shop_items.id WHERE users_id = '{id}'")
         return self.cursor.fetchall()
 
+    def get_case_inventory(self, id):
+        self.check_for_connection()
+        self.cursor.execute(f"SELECT * FROM user_case_inventory INNER JOIN case_items ON user_case_inventory.items_id = case_items.id WHERE users_id = '{id}'")
+        return self.cursor.fetchall()
+
 database = Connector(host, user, password, db)

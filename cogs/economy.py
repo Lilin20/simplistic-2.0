@@ -248,6 +248,13 @@ class Economy(commands.Cog):
             for item in items:
                 embed.add_field(name=f"{item[5]}", value=f"{item[6]}", inline=False)
             await ctx.respond(embed=embed)
+
+        if inventory == "case":
+            embed = discord.Embed(title="Simplistic - Case-Inventar", color=discord.Colour.green())
+            items = db.database.get_case_inventory(ctx.author.id)
+            for item in items:
+                embed.add_field(name=f"{item[5]}", value=f"{item[6]}", inline=False)
+            await ctx.respond(embed=embed)
         
 
 def setup(bot):
