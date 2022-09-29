@@ -17,7 +17,7 @@ db = c_parser.get('Database', 'db')
 
 class Connector:
     def __init__(self, host, user, password, db):
-        self.init_db(host, user, password, db)
+        self.init_db()
         self.host = host
         self.user = user
         self.password = password
