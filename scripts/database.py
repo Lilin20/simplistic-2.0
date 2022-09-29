@@ -17,11 +17,11 @@ db = c_parser.get('Database', 'db')
 
 class Connector:
     def __init__(self, host, user, password, db):
-        self.init_db()
         self.host = host
         self.user = user
         self.password = password
         self.db = db
+        self.init_db()
     
     def init_db(self):
         self.database = mysql.connector.connect(host=self.host, user=self.user, password=self.password, autocommit=True)
