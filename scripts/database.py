@@ -25,7 +25,7 @@ class Connector:
     
     def init_db(self):
         self.database = mysql.connector.connect(host=self.host, user=self.user, password=self.password, autocommit=True)
-        self.cursor = self.database.cursor()
+        self.cursor = self.database.cursor(buffered=True)
         self.cursor.execute(f"USE {self.db}")
 
     def fetchall(self):
